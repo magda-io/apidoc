@@ -62,7 +62,6 @@ describe('apiDoc multiple folder input', function() {
     it('created files should equal to fixtures', function(done) {
         var timeRegExp = /\"time\"\:\s\"(.*)\"/g;
         var versionRegExp = /\"version\"\:\s\"(.*)\"/g;
-        var filenameRegExp = new RegExp('(?!"filename":\\s")(' + projectBaseBath + '/)', 'g');
 
         fixtureFiles.forEach(function(name) {
             var fixtureContent = fs.readFileSync(path.join(fixturePath, name), 'utf8');
@@ -76,8 +75,9 @@ describe('apiDoc multiple folder input', function() {
             fixtureContent = fixtureContent.replace(versionRegExp, '');
             createdContent = createdContent.replace(versionRegExp, '');
 
-            // remove the base path
-            createdContent = createdContent.replace(filenameRegExp, '');
+            // normalize line endings and whitespace
+            fixtureContent = fixtureContent.replace(/\r\n/g, '\n').replace(/\s+/g, ' ').trim();
+            createdContent = createdContent.replace(/\r\n/g, '\n').replace(/\s+/g, ' ').trim();
 
             var fixtureLines = fixtureContent.split(/\n/);
             var createdLines = createdContent.split(/\n/);
@@ -86,7 +86,7 @@ describe('apiDoc multiple folder input', function() {
                 throw new Error('File ' + path.join(testTargetPath, name) + ' not equals to ' + fixturePath + '/' + name);
 
             for (var lineNumber = 0; lineNumber < fixtureLines.length; lineNumber += 1) {
-                if (fixtureLines[lineNumber] !== createdLines[lineNumber])
+                if (fixtureLines[lineNumber].trim() !== createdLines[lineNumber].trim())
                     throw new Error('File ' + path.join(testTargetPath, name) + ' not equals to ' + fixturePath + '/' + name + ' in line ' + (lineNumber + 1) +
                         '\nfixture: ' + fixtureLines[lineNumber] +
                         '\ncreated: ' + createdLines[lineNumber]

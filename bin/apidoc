@@ -12,56 +12,115 @@
  */
 
 var path   = require('path');
-var nomnom = require('nomnom');
+var yargs  = require('yargs');
 var apidoc = require('../lib/index');
 
-var argv = nomnom
-    .option('file-filters', { abbr: 'f', 'default': '.*\\.(clj|cls|coffee|cpp|cs|dart|erl|exs?|go|groovy|ino?|java|js|jsx|kt|litcoffee|lua|p|php?|pl|pm|py|rb|scala|ts|vue)$',
-            list: true,
-            help: 'RegEx-Filter to select files that should be parsed (multiple -f can be used).' })
-
-    .option('exclude-filters', { abbr: 'e', 'default': '', list: true,
-            help: 'RegEx-Filter to select files / dirs that should not be parsed (many -e can be used).', })
-
-    .option('input', { abbr: 'i', 'default': './', list: true, help: 'Input / source dirname.' })
-
-    .option('output', { abbr: 'o', 'default': './doc/', help: 'Output dirname.' })
-
-    .option('template', { abbr: 't', 'default': path.join(__dirname, '../template/'),
-            help: 'Use template for output files.' })
-
-    .option('config', { abbr: 'c', 'default': './', help: 'Path to directory containing config file (apidoc.json)' })
-
-    .option('private', { abbr: 'p', 'default': false, help: 'Include private APIs in output.'})
-
-    .option('verbose', { abbr: 'v', flag: true, 'default': false, help: 'Verbose debug output.' })
-
-    .option('help', { abbr: 'h', flag: true, help: 'Show this help information.' })
-
-    .option('debug', { flag: true, 'default': false, help: 'Show debug messages.' })
-
-    .option('color', { flag: true, 'default': true, help: 'Turn off log color.' })
-
-    .option('parse', { flag: true, 'default': false,
-            help: 'Parse only the files and return the data, no file creation.' })
-
-    .option('parse-filters'  , { list: true, help: 'Optional user defined filters. Format name=filename' })
-    .option('parse-languages', { list: true, help: 'Optional user defined languages. Format name=filename' })
-    .option('parse-parsers'  , { list: true, help: 'Optional user defined parsers. Format name=filename' })
-    .option('parse-workers'  , { list: true, help: 'Optional user defined workers. Format name=filename' })
-
-    .option('silent', { flag: true, 'default': false, help: 'Turn all output off.' })
-
-    .option('simulate', { flag: true, 'default': false, help: 'Execute but not write any file.' })
-
-    .option('markdown', { 'default': true, help: 'Turn off default markdown parser or set a file to a custom parser.' })
-
-    .option('line-ending', { help: 'Turn off autodetect line-ending. Allowed values: LF, CR, CRLF.' })
-
-    .option('encoding', { 'default': 'utf8', help : 'Set the encoding of the source code. [utf8].' })
-
-    .parse()
-;
+var argv = yargs
+    .option('file-filters', {
+        alias: 'f',
+        default: '.*\\.(clj|cls|coffee|cpp|cs|dart|erl|exs?|go|groovy|ino?|java|js|jsx|kt|litcoffee|lua|p|php?|pl|pm|py|rb|scala|ts|vue)$',
+        array: true,
+        description: 'RegEx-Filter to select files that should be parsed (multiple -f can be used).'
+    })
+    .option('exclude-filters', {
+        alias: 'e',
+        default: '',
+        array: true,
+        description: 'RegEx-Filter to select files / dirs that should not be parsed (many -e can be used).'
+    })
+    .option('input', {
+        alias: 'i',
+        default: ['./'],
+        array: true,
+        description: 'Input / source dirname.'
+    })
+    .option('output', {
+        alias: 'o',
+        default: './doc/',
+        description: 'Output dirname.'
+    })
+    .option('template', {
+        alias: 't',
+        default: path.join(__dirname, '../template/'),
+        description: 'Use template for output files.'
+    })
+    .option('config', {
+        alias: 'c',
+        default: './',
+        description: 'Path to directory containing config file (apidoc.json)'
+    })
+    .option('private', {
+        alias: 'p',
+        default: false,
+        description: 'Include private APIs in output.'
+    })
+    .option('verbose', {
+        alias: 'v',
+        boolean: true,
+        default: false,
+        description: 'Verbose debug output.'
+    })
+    .option('help', {
+        alias: 'h',
+        boolean: true,
+        description: 'Show this help information.'
+    })
+    .option('debug', {
+        boolean: true,
+        default: false,
+        description: 'Show debug messages.'
+    })
+    .option('color', {
+        boolean: true,
+        default: true,
+        description: 'Turn off log color.'
+    })
+    .option('parse', {
+        boolean: true,
+        default: false,
+        description: 'Parse only the files and return the data, no file creation.'
+    })
+    .option('parse-filters', {
+        array: true,
+        description: 'Optional user defined filters. Format name=filename'
+    })
+    .option('parse-languages', {
+        array: true,
+        description: 'Optional user defined languages. Format name=filename'
+    })
+    .option('parse-parsers', {
+        array: true,
+        description: 'Optional user defined parsers. Format name=filename'
+    })
+    .option('parse-workers', {
+        array: true,
+        description: 'Optional user defined workers. Format name=filename'
+    })
+    .option('silent', {
+        alias: 's',
+        boolean: true,
+        default: false,
+        description: 'Turn all output off.'
+    })
+    .option('simulate', {
+        alias: 'm',
+        boolean: true,
+        default: false,
+        description: 'Execute but not write any file.'
+    })
+    .option('markdown', {
+        default: true,
+        description: 'Turn off default markdown parser or set a file to a custom parser.'
+    })
+    .option('line-ending', {
+        description: 'Turn off autodetect line-ending. Allowed values: LF, CR, CRLF.'
+    })
+    .option('encoding', {
+        default: 'utf8',
+        description: 'Set the encoding of the source code. [utf8].'
+    })
+    .help()
+    .argv;
 
 /**
  * Transform parameters to object

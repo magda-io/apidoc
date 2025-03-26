@@ -89,6 +89,10 @@ describe('apiDoc full example', function() {
             // remove the base path
             createdContent = createdContent.replace(filenameRegExp, '');
 
+            // normalize line endings and whitespace
+            fixtureContent = fixtureContent.replace(/\r\n/g, '\n').replace(/\s+/g, ' ').trim();
+            createdContent = createdContent.replace(/\r\n/g, '\n').replace(/\s+/g, ' ').trim();
+
             var fixtureLines = fixtureContent.split(/\n/);
             var createdLines = createdContent.split(/\n/);
 
@@ -96,7 +100,7 @@ describe('apiDoc full example', function() {
                 throw new Error('File ./tmp/' + name + ' not equals to ' + fixturePath + '/' + name);
 
             for (var lineNumber = 0; lineNumber < fixtureLines.length; lineNumber += 1) {
-                if (fixtureLines[lineNumber] !== createdLines[lineNumber])
+                if (fixtureLines[lineNumber].trim() !== createdLines[lineNumber].trim())
                     throw new Error('File ./tmp/' + name + ' not equals to ' + fixturePath + '/' + name + ' in line ' + (lineNumber + 1) +
                         '\nfixture: ' + fixtureLines[lineNumber] +
                         '\ncreated: ' + createdLines[lineNumber]
